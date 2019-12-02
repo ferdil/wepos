@@ -1,12 +1,13 @@
 <template>
     <div class="search-box" v-click-outside="outside">
-        <form action="" autocomplete="off" @submit.prevent="handleProductScan">
+        <form action="" autocomplete="off">
             <input type="text" ref="productSearch" name="search" id="product-search" v-model="serachInput" :placeholder="placeholder" @focus.prevent="triggerFocus" @keyup.prevent="searchProduct">
             <span class="search-icon flaticon-musica-searcher" v-if="mode == 'product'"></span>
             <span class="search-icon flaticon-supermarket-scanner" v-if="mode == 'scan'"></span>
             <div class="search-type" v-hotkey="hotkeys">
                 <a href="#" :class="{ active: mode == 'product'}" @click.prevent="changeMode('product')">{{ __( 'Product', 'wepos' ) }}</a>
                 <a href="#" :class="{ active: mode == 'scan'}" @click.prevent="changeMode('scan')">{{ __( 'Scan', 'wepos' ) }}</a>
+                <a v-show=false href="#" id="handlescan" @click.prevent="handleProductScan(this)"></a>
             </div>
             <div class="search-result" v-show="showResults && mode=='product'">
                 <div v-if="searchableProduct.length">
@@ -49,12 +50,12 @@
         </form>
         <modal :title="__( 'Select Variations', 'wepos' )" v-if="showVariationModal" @close="showVariationModal = false" width="500px" height="auto" :footer="true" :header="true">
             <template slot="body">
-                <div class="variation-attribute-wrapper" v-for="attribute in selectedVariationProduct.attributes">
+                <div class="variation-attribute-wrapper" v-for="attribute in selectedVariationProduct.attributes" v-bind:key="attribute.id">
                     <div class="attribute">
                         <p>{{ attribute.name }}</p>
                         <div class="options">
                             <template v-for="option in attribute.options">
-                                <label>
+                                <label v-bind:key="option.id">
                                     <input type="radio" v-model="chosenAttribute[attribute.name]" :value="option">
                                     <div class="box">
                                         {{ option }}
@@ -192,15 +193,15 @@ export default {
         },
 
         handleProductScan() {
-            if ( this.mode == 'product' ) {
-                return;
-            }
+
+            this.serachInput = jQuery('#product-search').val();
             var generalSettings = this.settings.wepos_general,
                 field = generalSettings.barcode_scanner_field == 'custom' ? 'barcode' : generalSettings.barcode_scanner_field,
                 selectedProduct = {},
+                searchInput = this.serachInput,
                 filterProduct = this.products.filter( (product) => {
                     if ( product.type == 'simple' ) {
-                        if ( product[field].toString() == this.serachInput ) {
+                        if ( product[field].toString() == searchInput ) {
                             return true;
                         }
                     }
@@ -208,7 +209,7 @@ export default {
                         var ifFound = false;
                         if ( product.variations.length > 0 ) {
                             weLo_.forEach( product.variations, ( item, key ) => {
-                                if ( item[field].toString() == this.serachInput ) {
+                                if ( item[field].toString() == searchInput ) {
                                     ifFound = true;
                                 }
                             } );
@@ -242,8 +243,6 @@ export default {
                     this.$emit( 'onProductAdded', filterProduct );
                 }
             }
-
-            this.serachInput = '';
         },
 
         searchProduct(e) {
@@ -272,6 +271,10 @@ export default {
         addVariationProduct() {
             var chosenVariationProduct = this.findMatchingVariations( this.selectedVariationProduct.variations, this.chosenAttribute );
             var variationProduct       = chosenVariationProduct[0];
+            if (typeof variationProduct == 'undefined' ) {
+                alert( this.__( 'Variation is not available', 'wepos' ) );
+                return;
+            }
             variationProduct.parent_id = this.selectedVariationProduct.id;
             variationProduct.type      = this.selectedVariationProduct.type;
             variationProduct.name      = this.selectedVariationProduct.name;

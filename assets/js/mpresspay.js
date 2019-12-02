@@ -32,6 +32,15 @@ var mpress;
             console.log('Result Data :'+JSON.stringify(data));
             document.getElementById('mpress_result').value = JSON.stringify(data);
             document.getElementById('mpress_result').dispatchEvent(new Event("input")); // Triggers change event in Home.vue
+        },
+        failedPEDPayment: function(data) {
+            console.log('Failed Data :'+JSON.stringify(data));
+            document.getElementById('mpress_result').value = JSON.stringify(data);
+            document.getElementById('mpress_result').dispatchEvent(new Event("input")); // Triggers change event in Home.vue
+        },
+        pushScannerData: function(scannerData) {
+            document.getElementById('product-search').value = scannerData;
+            document.getElementById('handlescan').click();
         }
     };
 

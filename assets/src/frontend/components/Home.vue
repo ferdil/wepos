@@ -15,8 +15,7 @@
                         selectedLabel=""
                         :placeholder="__( 'Select a category', 'wepos' )"
                         @select="handleCategorySelect"
-                        @remove="handleCategoryRemove"
-                    >
+                        @remove="handleCategoryRemove">
                         <template slot="singleLabel" slot-scope="props">
                             {{props.option.name}}
                         </template>
@@ -46,7 +45,7 @@
             <div class="breadcrumb" v-if="getBreadCrums.length > 0">
                 <ul>
                     <template v-for="breadcrumb in getBreadCrums">
-                        <router-link tag="li" :to="{ name: 'Home', query: { category: breadcrumb.id }}">
+                        <router-link tag="li" :to="{ name: 'Home', query: { category: breadcrumb.id }}" v-bind:key="breadcrumb.id">
                             <a>{{ breadcrumb.name }}</a>
                         </router-link>
                     </template>
@@ -54,8 +53,8 @@
                 <span class="close-breadcrumb flaticon-cancel-music" @click.prevent="removeBreadcrums"></span>
             </div>
             <div class="items-wrapper" :class="productView" ref="items-wrapper">
-                <template v-if="!productLoading">
-                    <div class="item" v-if="getFilteredProduct.length > 0" v-for="product in getFilteredProduct">
+                <template v-if="!productLoading && getFilteredProduct.length > 0">
+                    <div class="item" v-for="product in getFilteredProduct" v-bind:key="product.id">
                         <template v-if="product.type == 'simple'">
                             <div class="item-wrap" @click.prevent="addToCart(product)">
                                 <div class="img">
@@ -111,11 +110,11 @@
                                     </div>
                                     <div class="variation-body">
                                         <template v-for="attribute in product.attributes">
-                                            <div class="attribute">
+                                            <div class="attribute" v-bind:key="attribute.id">
                                                 <p>{{ attribute.name }}</p>
                                                 <div class="options">
                                                     <template v-for="option in attribute.options">
-                                                        <label>
+                                                        <label v-bind:key="option.id">
                                                             <input type="radio" v-model="selectedAttribute[attribute.name]" :value="option">
                                                             <div class="box">
                                                                 {{ option }}
@@ -192,12 +191,12 @@
                         <tbody>
                             <template v-if="cartdata.line_items.length > 0">
                                 <template v-for="(item,key) in cartdata.line_items">
-                                    <tr>
+                                    <tr v-bind:key="item.id">
                                         <td class="name" @click="toggleEditQuantity( item, key )">
                                             {{ item.name }}
                                             <div class="attribute" v-if="item.attribute.length > 0 && item.type === 'variable'">
                                                 <ul>
-                                                    <li v-for="attribute_item in item.attribute"><span class="attr_name">{{ attribute_item.name }}</span>: <span class="attr_value">{{ attribute_item.option }}</span></li>
+                                                    <li v-for="attribute_item in item.attribute" v-bind:key="attribute_item.id"><span class="attr_name">{{ attribute_item.name }}</span>: <span class="attr_value">{{ attribute_item.option }}</span></li>
                                                 </ul>
                                             </div>
                                         </td>
@@ -218,7 +217,7 @@
                                             <span class="flaticon-cancel-music" @click.prevent="removeItem(key)"></span>
                                         </td>
                                     </tr>
-                                    <tr v-if="item.editQuantity" class="update-quantity-wrap">
+                                    <tr v-if="item.editQuantity" class="update-quantity-wrap" v-bind:key="item.id">
                                         <td colspan="5">
                                             <span class="qty">{{ __( 'Quantity', 'wepos' ) }}</span>
                                             <span class="qty-number"><input type="number" min="1" step="1" v-model="item.quantity"></span>
@@ -256,7 +255,7 @@
                                     <td class="action"></td>
                                 </tr>
                                 <template v-if="cartdata.fee_lines.length > 0">
-                                    <tr class="cart-meta-data" v-for="(fee,key) in cartdata.fee_lines">
+                                    <tr class="cart-meta-data" v-for="(fee,key) in cartdata.fee_lines" v-bind:key="fee.id">
                                         <template v-if="fee.type=='discount'">
                                             <td class="label">{{ __( 'Discount', 'wepos' ) }} <span class="name">{{ fee.discount_type == 'percent' ? fee.value + '%' : formatPrice( fee.value ) }}</span></td>
                                             <td class="price">&minus;{{ formatPrice( Math.abs( fee.total ) ) }}</td>
@@ -270,7 +269,7 @@
                                                     <template v-if="settings.wepos_general.enable_fee_tax == 'yes'">
                                                         <label for="fee-tax-status"><input type="checkbox" id="fee-tax-status" class="fee-tax-status" v-model="feeData.tax_status" :true-value="'taxable'" :false-value="'none'"> {{ __( 'Taxable', 'wepos' ) }}</label>
                                                         <select class="fee-tax-class" v-model="feeData.tax_class" v-if="feeData.tax_status=='taxable'">
-                                                            <option v-for="feeTax in availableTax" :value="feeTax.class == 'standard' ? '' : feeTax.class">{{ unSanitizeString( feeTax.class ) }} - {{ feeTax.percentage_rate }}</option>
+                                                            <option v-for="feeTax in availableTax" v-bind:key="feeTax.class" :value="feeTax.class == 'standard' ? '' : feeTax.class">{{ unSanitizeString( feeTax.class ) }} - {{ feeTax.percentage_rate }}</option>
                                                         </select>
                                                     </template>
                                                     <button :disabled="feeData.name == ''" @click.prevent="saveFee(key)">{{ __( 'Apply', 'wepos' ) }}</button>
@@ -415,12 +414,12 @@
                         <div class="content">
                             <table class="sale-summary-cart">
                                 <tbody>
-                                    <tr v-for="item in cartdata.line_items">
+                                    <tr v-for="item in cartdata.line_items" v-bind:key="item.id">
                                         <td class="name">
                                             {{ item.name }}
                                             <div class="attribute" v-if="item.attribute.length > 0 && item.type === 'variable'">
                                                 <ul>
-                                                    <li v-for="attribute_item in item.attribute"><span class="attr_name">{{ attribute_item.name }}</span>: <span class="attr_value">{{ attribute_item.option }}</span></li>
+                                                    <li v-for="attribute_item in item.attribute" v-bind:key="attribute_item.id"><span class="attr_name">{{ attribute_item.name }}</span>: <span class="attr_value">{{ attribute_item.option }}</span></li>
                                                 </ul>
                                             </div>
                                         </td>
@@ -451,7 +450,7 @@
                                     <span class="wepos-right">{{ formatPrice( $store.getters['Cart/getSubtotal'] ) }}</span>
                                 </li>
                                 <template v-if="cartdata.fee_lines.length > 0">
-                                    <li class="wepos-clearfix" v-for="(fee,key) in cartdata.fee_lines">
+                                    <li class="wepos-clearfix" v-for="(fee) in cartdata.fee_lines" v-bind:key="fee.id">
                                         <template v-if="fee.type=='discount'">
                                             <span class="wepos-left">{{ __( 'Discount', 'wepos' ) }} <span class="metadata">{{ fee.name }} {{ fee.discount_type == 'percent' ? fee.value + '%' : formatPrice( fee.value ) }}</span></span>
                                             <span class="wepos-right">-{{ formatPrice( Math.abs( fee.total ) ) }}</span>
@@ -486,7 +485,7 @@
                         <div class="content">
                             <div class="payment-gateway">
                                 <template v-if="availableGateways.length > 0">
-                                    <label v-for="gateway in availableGateways">
+                                    <label v-for="gateway in availableGateways" v-bind:key="gateway.id">
                                         <input type="radio" name="gateway" checked :value="gateway.id" v-model="selectedGateway">  <!-- v-model="orderdata.payment_method" -->
                                         <span class="gateway" :class="`gateway-${gateway.id}`">
                                             {{ gateway.title }}
@@ -851,12 +850,12 @@ export default {
                 // }
                 // Fake Trans
                 var res = JSON.parse("{\"POS_OS_Version\":\"8-1\",\"EMV_TransactionStatusInformation\":\"E800\",\"RequestID\":\"{84E7D4AC-CCBD-48D4-997F-762D121F3078}\",\"EMV_CardSequenceNumber\":\"00\",\"EMV_ApplicationVersion\":\"008C\",\"AuthorisationCode\":\"140423\",\"ReceiptFormat\":\"html\",\"CurrencyDecimalPosition\":\"2\",\"EMV_ApplicationInterchangeProfile\":\"3C00\",\"PANMode\":\"Dipped\",\"RequestSignature\":\"false\",\"POS_Application_Version\":\"1-47\",\"Version\":\"2.0\",\"StatusDescription\":\"TRANSACTION APPROVED\",\"Currency\":\"710\",\"EMV_IssuerAuthenticationData\":\"1448C67D7F4E52723030\",\"AcceptSignatureCard\":false,\"DisplayTransactionAmount\":\"R 106.00\",\"TipAmount\":\"0\",\"ExpiryYear\":\"19\",\"EMV_AuthorisationRequestCryptogram\":\"58A1CE7CC60005E2\",\"POS_Manufacturer\":\"Miura\",\"Status\":\"0\",\"DottedPAN\":\"492312FFFFFF1826\",\"ExpiryMonth\":\"11\",\"EMV_ResponseCode\":\"00\",\"Timeout\":\"60\",\"AcceptManualEntry\":\"false\",\"DisplayTransactionDateTime\":\"2019-10-31 11:10\",\"MerchantUSN\":\"1732668\",\"POS_Model\":\"\",\"Track2\":\"41BC1938B963926937074197BA2C91FBA683B5E9396FCF00\",\"EMV_CardHolderVerificationMethodResult\":\"440302\",\"EMV_ApplicationIdentifier\":\"A0000000031010\",\"Distributor\":\"Nedbank\",\"Transaction\":{\"MerchantReference\":\"613\",\"ExpiryDate\":\"112019\",\"RequestID\":\"{84E7D4AC-CCBD-48D4-997F-762D121F3078}\",\"Issuer\":\"Unknown Issuer\",\"AuthorisationCode\":\"140423\",\"ReconReference\":\"09014915\",\"MerchantCountry\":\"South Africa\",\"PANMode\":\"Dipped,EMV,EncryptedTrack2\",\"AcquirerTime\":\"111045\",\"Result\":{\"Status\":\"0\",\"AppServer\":\"QAGW2012APP1\",\"AcquirerDescription\":\"\",\"Description\":\"\",\"DBServer\":\"qagw2012db2\",\"Gateway\":\"QA\",\"AcquirerCode\":\"00\",\"Code\":\"0\"},\"Association\":\"VISA\",\"MerchantName\":\"mPRESS\",\"AcquirerDate\":\"20191031\",\"TransactionIndex\":\"{896E6F4B-2EC5-40F2-A3DB-386E211FDFB5}\",\"CardType\":\"Unknown Card Type\",\"Currency\":\"ZAR\",\"EMV_IssuerAuthenticationData\":\"1448C67D7F4E52723030\",\"Acquirer\":\"NBPostilionNBSouthAfrica\",\"ApplicationID\":\"{4925859B-8452-4680-B06D-D8328E34EB53}\",\"EMV_ResponseCode\":\"00\",\"MerchantAddress\":\"MERCHANT ADDRESS\",\"BIN\":\"492312\",\"Amount\":\"10600\",\"DistributorName\":\"Nedbank\",\"Mode\":\"Live\",\"MerchantCountryCode\":\"ZA\",\"MerchantUSN\":\"1732668\",\"MerchantTrace\":\"077837e2-6a1c-4929-a74a-521c0f6ae790\",\"Terminal\":\"mpress1\",\"DisplayAmount\":\"R 106.00\",\"Jurisdiction\":\"Local\",\"MerchantCity\":\"JOHANNESBURG\",\"CardHolderPresence\":\"CardPresent\",\"Command\":\"Debit\",\"AcquirerReference\":\"01692:09014915\",\"PAN\":\"4923........1826\"},\"ResultDescription\":\"\",\"ReceiptGraphicFileName\":\"\",\"PromptForCash\":\"false\",\"MerchantReference\":\"613\",\"TransactionType\":\"Sale\",\"P2PEStatus\":\"06\",\"PromptForTip\":\"false\",\"EMV_IssuerScriptTemplate2\":\"\",\"CardAcceptorID\":\"\",\"EMV_IssuerScriptTemplate1\":\"\",\"POS_OS\":\"M000-TESTOS\",\"EMV_IssuerApplicationData\":\"06010A03A40002\",\"DeviceSerialNumber\":\"21002911\",\"Track2KeySerialNumber\":\"FFFF8002920672000007\",\"EMV_TerminalCapabilities\":\"E0F8C8\",\"Direction\":\"Response\",\"EMV_TerminalType\":\"22\",\"PrintMerchantReceipt\":\"false\",\"POS_Application\":\"M000-MPI\",\"MerchantName\":\"mPRESS\",\"AcceptPinCard\":true,\"AcceptSmartCard\":true,\"DeviceMake\":\"Miura\",\"EMV_TerminalVerificationResult\":\"0080008000\",\"PrintCustomerReceipt\":\"false\",\"EMV_UnpredictableNumber\":\"C310A037\",\"BatteryLevel\":\"100\",\"Amount\":\"10600\",\"PromptForBudgetPeriod\":\"false\",\"EMV_CryptogramInformationData\":\"80\",\"BatteryStatus\":\"Charging\",\"PrinterStatus\":\"NoPrinter\",\"IsDebug\":\"false\",\"AcquirerReference\":\"01692:09014915\",\"EMV_ApplicationTransactionCounter\":\"0160\",\"PAN\":\"4923........1826\",\"ResultCode\":\"0\",\"CashAmount\":\"0\"}");
-                document.getElementById('mpress_result').value = JSON.stringify(res);
                 this.$store.dispatch( 'Order/setPaymentDataAction', res );
                 wepos.api.post(wepos.rest.root + wepos.rest.wcversion + '/orders', orderdata).done(response => {
                     // Update the local copy
                     this.$store.dispatch( 'Order/setOrderDataAction', response );
-                    setTimeout(function(){ 
+                    setTimeout(function(){
+                        document.getElementById('mpress_result').value = "{\"POS_OS_Version\":\"8-1\",\"EMV_TransactionStatusInformation\":\"E800\",\"RequestID\":\"{84E7D4AC-CCBD-48D4-997F-762D121F3078}\",\"EMV_CardSequenceNumber\":\"00\",\"EMV_ApplicationVersion\":\"008C\",\"AuthorisationCode\":\"140423\",\"ReceiptFormat\":\"html\",\"CurrencyDecimalPosition\":\"2\",\"EMV_ApplicationInterchangeProfile\":\"3C00\",\"PANMode\":\"Dipped\",\"RequestSignature\":\"false\",\"POS_Application_Version\":\"1-47\",\"Version\":\"2.0\",\"StatusDescription\":\"TRANSACTION APPROVED\",\"Currency\":\"710\",\"EMV_IssuerAuthenticationData\":\"1448C67D7F4E52723030\",\"AcceptSignatureCard\":false,\"DisplayTransactionAmount\":\"R 106.00\",\"TipAmount\":\"0\",\"ExpiryYear\":\"19\",\"EMV_AuthorisationRequestCryptogram\":\"58A1CE7CC60005E2\",\"POS_Manufacturer\":\"Miura\",\"Status\":\"0\",\"DottedPAN\":\"492312FFFFFF1826\",\"ExpiryMonth\":\"11\",\"EMV_ResponseCode\":\"00\",\"Timeout\":\"60\",\"AcceptManualEntry\":\"false\",\"DisplayTransactionDateTime\":\"2019-10-31 11:10\",\"MerchantUSN\":\"1732668\",\"POS_Model\":\"\",\"Track2\":\"41BC1938B963926937074197BA2C91FBA683B5E9396FCF00\",\"EMV_CardHolderVerificationMethodResult\":\"440302\",\"EMV_ApplicationIdentifier\":\"A0000000031010\",\"Distributor\":\"Nedbank\",\"Transaction\":{\"MerchantReference\":\"613\",\"ExpiryDate\":\"112019\",\"RequestID\":\"{84E7D4AC-CCBD-48D4-997F-762D121F3078}\",\"Issuer\":\"Unknown Issuer\",\"AuthorisationCode\":\"140423\",\"ReconReference\":\"09014915\",\"MerchantCountry\":\"South Africa\",\"PANMode\":\"Dipped,EMV,EncryptedTrack2\",\"AcquirerTime\":\"111045\",\"Result\":{\"Status\":\"0\",\"AppServer\":\"QAGW2012APP1\",\"AcquirerDescription\":\"\",\"Description\":\"\",\"DBServer\":\"qagw2012db2\",\"Gateway\":\"QA\",\"AcquirerCode\":\"00\",\"Code\":\"0\"},\"Association\":\"VISA\",\"MerchantName\":\"mPRESS\",\"AcquirerDate\":\"20191031\",\"TransactionIndex\":\"{896E6F4B-2EC5-40F2-A3DB-386E211FDFB5}\",\"CardType\":\"Unknown Card Type\",\"Currency\":\"ZAR\",\"EMV_IssuerAuthenticationData\":\"1448C67D7F4E52723030\",\"Acquirer\":\"NBPostilionNBSouthAfrica\",\"ApplicationID\":\"{4925859B-8452-4680-B06D-D8328E34EB53}\",\"EMV_ResponseCode\":\"00\",\"MerchantAddress\":\"MERCHANT ADDRESS\",\"BIN\":\"492312\",\"Amount\":\"10600\",\"DistributorName\":\"Nedbank\",\"Mode\":\"Live\",\"MerchantCountryCode\":\"ZA\",\"MerchantUSN\":\"1732668\",\"MerchantTrace\":\"077837e2-6a1c-4929-a74a-521c0f6ae790\",\"Terminal\":\"mpress1\",\"DisplayAmount\":\"R 106.00\",\"Jurisdiction\":\"Local\",\"MerchantCity\":\"JOHANNESBURG\",\"CardHolderPresence\":\"CardPresent\",\"Command\":\"Debit\",\"AcquirerReference\":\"01692:09014915\",\"PAN\":\"4923........1826\"},\"ResultDescription\":\"\",\"ReceiptGraphicFileName\":\"\",\"PromptForCash\":\"false\",\"MerchantReference\":\"613\",\"TransactionType\":\"Sale\",\"P2PEStatus\":\"06\",\"PromptForTip\":\"false\",\"EMV_IssuerScriptTemplate2\":\"\",\"CardAcceptorID\":\"\",\"EMV_IssuerScriptTemplate1\":\"\",\"POS_OS\":\"M000-TESTOS\",\"EMV_IssuerApplicationData\":\"06010A03A40002\",\"DeviceSerialNumber\":\"21002911\",\"Track2KeySerialNumber\":\"FFFF8002920672000007\",\"EMV_TerminalCapabilities\":\"E0F8C8\",\"Direction\":\"Response\",\"EMV_TerminalType\":\"22\",\"PrintMerchantReceipt\":\"false\",\"POS_Application\":\"M000-MPI\",\"MerchantName\":\"mPRESS\",\"AcceptPinCard\":true,\"AcceptSmartCard\":true,\"DeviceMake\":\"Miura\",\"EMV_TerminalVerificationResult\":\"0080008000\",\"PrintCustomerReceipt\":\"false\",\"EMV_UnpredictableNumber\":\"C310A037\",\"BatteryLevel\":\"100\",\"Amount\":\"10600\",\"PromptForBudgetPeriod\":\"false\",\"EMV_CryptogramInformationData\":\"80\",\"BatteryStatus\":\"Charging\",\"PrinterStatus\":\"NoPrinter\",\"IsDebug\":\"false\",\"AcquirerReference\":\"01692:09014915\",\"EMV_ApplicationTransactionCounter\":\"0160\",\"PAN\":\"4923........1826\",\"ResultCode\":\"0\",\"CashAmount\":\"0\"}";
                         document.getElementById('mpress_result').dispatchEvent(new Event("input")); // Triggers change event in Home.vue
                     }, 3000);
                 }).fail(response => {
@@ -1121,6 +1120,10 @@ export default {
         addVariationProduct() {
             var chosenVariationProduct = this.findMatchingVariations( this.selectedVariationProduct.variations, this.selectedAttribute );
             var variationProduct       = chosenVariationProduct[0];
+            if (typeof variationProduct == 'undefined' ) {
+                alert( this.__( 'Variation is not available', 'wepos' ) );
+                return;
+            }
             variationProduct.parent_id = this.selectedVariationProduct.id;
             variationProduct.type      = this.selectedVariationProduct.type;
             variationProduct.name      = this.selectedVariationProduct.name;
