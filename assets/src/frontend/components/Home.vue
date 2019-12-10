@@ -856,7 +856,7 @@ export default {
                     this.$store.dispatch( 'Order/setOrderDataAction', response );
                     setTimeout(function(){
                         document.getElementById('mpress_result').value = "{\"POS_OS_Version\":\"8-1\",\"EMV_TransactionStatusInformation\":\"E800\",\"RequestID\":\"{84E7D4AC-CCBD-48D4-997F-762D121F3078}\",\"EMV_CardSequenceNumber\":\"00\",\"EMV_ApplicationVersion\":\"008C\",\"AuthorisationCode\":\"140423\",\"ReceiptFormat\":\"html\",\"CurrencyDecimalPosition\":\"2\",\"EMV_ApplicationInterchangeProfile\":\"3C00\",\"PANMode\":\"Dipped\",\"RequestSignature\":\"false\",\"POS_Application_Version\":\"1-47\",\"Version\":\"2.0\",\"StatusDescription\":\"TRANSACTION APPROVED\",\"Currency\":\"710\",\"EMV_IssuerAuthenticationData\":\"1448C67D7F4E52723030\",\"AcceptSignatureCard\":false,\"DisplayTransactionAmount\":\"R 106.00\",\"TipAmount\":\"0\",\"ExpiryYear\":\"19\",\"EMV_AuthorisationRequestCryptogram\":\"58A1CE7CC60005E2\",\"POS_Manufacturer\":\"Miura\",\"Status\":\"0\",\"DottedPAN\":\"492312FFFFFF1826\",\"ExpiryMonth\":\"11\",\"EMV_ResponseCode\":\"00\",\"Timeout\":\"60\",\"AcceptManualEntry\":\"false\",\"DisplayTransactionDateTime\":\"2019-10-31 11:10\",\"MerchantUSN\":\"1732668\",\"POS_Model\":\"\",\"Track2\":\"41BC1938B963926937074197BA2C91FBA683B5E9396FCF00\",\"EMV_CardHolderVerificationMethodResult\":\"440302\",\"EMV_ApplicationIdentifier\":\"A0000000031010\",\"Distributor\":\"Nedbank\",\"Transaction\":{\"MerchantReference\":\"613\",\"ExpiryDate\":\"112019\",\"RequestID\":\"{84E7D4AC-CCBD-48D4-997F-762D121F3078}\",\"Issuer\":\"Unknown Issuer\",\"AuthorisationCode\":\"140423\",\"ReconReference\":\"09014915\",\"MerchantCountry\":\"South Africa\",\"PANMode\":\"Dipped,EMV,EncryptedTrack2\",\"AcquirerTime\":\"111045\",\"Result\":{\"Status\":\"0\",\"AppServer\":\"QAGW2012APP1\",\"AcquirerDescription\":\"\",\"Description\":\"\",\"DBServer\":\"qagw2012db2\",\"Gateway\":\"QA\",\"AcquirerCode\":\"00\",\"Code\":\"0\"},\"Association\":\"VISA\",\"MerchantName\":\"mPRESS\",\"AcquirerDate\":\"20191031\",\"TransactionIndex\":\"{896E6F4B-2EC5-40F2-A3DB-386E211FDFB5}\",\"CardType\":\"Unknown Card Type\",\"Currency\":\"ZAR\",\"EMV_IssuerAuthenticationData\":\"1448C67D7F4E52723030\",\"Acquirer\":\"NBPostilionNBSouthAfrica\",\"ApplicationID\":\"{4925859B-8452-4680-B06D-D8328E34EB53}\",\"EMV_ResponseCode\":\"00\",\"MerchantAddress\":\"MERCHANT ADDRESS\",\"BIN\":\"492312\",\"Amount\":\"10600\",\"DistributorName\":\"Nedbank\",\"Mode\":\"Live\",\"MerchantCountryCode\":\"ZA\",\"MerchantUSN\":\"1732668\",\"MerchantTrace\":\"077837e2-6a1c-4929-a74a-521c0f6ae790\",\"Terminal\":\"mpress1\",\"DisplayAmount\":\"R 106.00\",\"Jurisdiction\":\"Local\",\"MerchantCity\":\"JOHANNESBURG\",\"CardHolderPresence\":\"CardPresent\",\"Command\":\"Debit\",\"AcquirerReference\":\"01692:09014915\",\"PAN\":\"4923........1826\"},\"ResultDescription\":\"\",\"ReceiptGraphicFileName\":\"\",\"PromptForCash\":\"false\",\"MerchantReference\":\"613\",\"TransactionType\":\"Sale\",\"P2PEStatus\":\"06\",\"PromptForTip\":\"false\",\"EMV_IssuerScriptTemplate2\":\"\",\"CardAcceptorID\":\"\",\"EMV_IssuerScriptTemplate1\":\"\",\"POS_OS\":\"M000-TESTOS\",\"EMV_IssuerApplicationData\":\"06010A03A40002\",\"DeviceSerialNumber\":\"21002911\",\"Track2KeySerialNumber\":\"FFFF8002920672000007\",\"EMV_TerminalCapabilities\":\"E0F8C8\",\"Direction\":\"Response\",\"EMV_TerminalType\":\"22\",\"PrintMerchantReceipt\":\"false\",\"POS_Application\":\"M000-MPI\",\"MerchantName\":\"mPRESS\",\"AcceptPinCard\":true,\"AcceptSmartCard\":true,\"DeviceMake\":\"Miura\",\"EMV_TerminalVerificationResult\":\"0080008000\",\"PrintCustomerReceipt\":\"false\",\"EMV_UnpredictableNumber\":\"C310A037\",\"BatteryLevel\":\"100\",\"Amount\":\"10600\",\"PromptForBudgetPeriod\":\"false\",\"EMV_CryptogramInformationData\":\"80\",\"BatteryStatus\":\"Charging\",\"PrinterStatus\":\"NoPrinter\",\"IsDebug\":\"false\",\"AcquirerReference\":\"01692:09014915\",\"EMV_ApplicationTransactionCounter\":\"0160\",\"PAN\":\"4923........1826\",\"ResultCode\":\"0\",\"CashAmount\":\"0\"}";
-                        document.getElementById('mpress_result').dispatchEvent(new Event("input")); // Triggers change event in Home.vue
+                        document.getElementById('mpress_result').dispatchEvent(new Event("input")); // Triggers change event in Home.vue which invokes completePayment() below
                     }, 3000);
                 }).fail(response => {
                     this.contentWrap.unblock();
@@ -866,14 +866,19 @@ export default {
                 // End Fake Trans
                 wepos.api.post(wepos.rest.root + wepos.rest.wcversion + '/orders', orderdata).done(response => {
                     // Update the local copy
-                    this.$store.state.Order.orderdata = response;
+                    //this.$store.state.Order.orderdata = response;
+                    // Update the local copy
+                    this.$store.dispatch( 'Order/setOrderDataAction', response );
+
                     // Start the mPress/Shoplit Transaction on the PED
                     var result = mpress.startPEDPayment(response);
                 }).fail(response => {
                     this.contentWrap.unblock();
                     window.Shoplit.showToast('There is a problem with the order. Please Empty the cart and restart the order\n'+response.responseJSON.message);
                 })
+                // Process continues in completePayment() below when the payment is completed on the Shoplit device
             } else {
+                // Normal WePOS cash sale process
                 wepos.api.post(wepos.rest.root + wepos.rest.wcversion + '/orders', orderdata).done(response => {
                     var update_meta_data = [
                     {
@@ -885,7 +890,9 @@ export default {
                         value: self.changeAmount.toString()
                     }
                     ];
+                    // Place the order
                     wepos.api.post(wepos.rest.root + wepos.rest.wcversion + '/orders/'+response.id, update_meta_data);
+                    // And process the payment immediatly
                     wepos.api.post(wepos.rest.root + wepos.rest.posversion + '/payment/process', response).done(data => {
                         if (data.result == 'success') {
                             this.$router.push({
@@ -911,9 +918,9 @@ export default {
                                 changeamount: this.changeAmount.toString(),
                             }, orderdata);
                         }
-                        contentWrap.unblock();
+                        this.contentWrap.unblock();
                     }).fail(data => {
-                        contentWrap.unblock();
+                        this.contentWrap.unblock();
                         alert(data.responseText);
                     });
                 });
@@ -974,10 +981,7 @@ export default {
             wepos.api.post(wepos.rest.root + wepos.rest.wcversion + '/orders/' + orderdata.id, update_meta_data).done(ordermetaupdate =>{
                 orderdata.meta_data = ordermetaupdate.meta_data;
                 this.$store.state.Order.orderdata = orderdata;
-                var order_note = {
-                    note: 'Transaction Result: '+JSON.stringify(this.mpressResult,null, 2)
-                };
-                wepos.api.post(wepos.rest.root + wepos.rest.wcversion + '/orders/'+orderdata.id+'/notes', order_note); // Ignore failures
+                this.$store.dispatch( 'Order/setPaymentDataAction', this.mpressResult );
                 // Now process the payment
                 wepos.api.post(wepos.rest.root + wepos.rest.posversion + '/payment/process', orderdata).done(process_response => {
                     if (process_response.result == 'success') {
