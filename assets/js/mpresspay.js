@@ -38,6 +38,11 @@ var mpress;
             document.getElementById('mpress_result').value = JSON.stringify(data);
             document.getElementById('mpress_result').dispatchEvent(new Event("input")); // Triggers change event in Home.vue
         },
+        openCashDrawer: function() {
+            console.log('Open Cash Drawer Request :');
+            return window.Shoplit.openCashDrawer();
+
+        },
         pushScannerData: function(scannerData) {
             document.getElementById('product-search').value = scannerData;
             document.getElementById('handlescan').click();

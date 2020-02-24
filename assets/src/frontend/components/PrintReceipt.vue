@@ -36,6 +36,8 @@ export default {
 function htmlToText(html){
     html = html.replace(/<div>/g, "");
     html = html.replace(/<\/div>/g, "\n");
+    html = html.replace(/<p>/g, "");
+    html = html.replace(/<\/p>/g, "\n");
     html = html.replace(/<\!--.*?-->/g, "");
     html = html.replace(/\n\s*/g, "\n");
 

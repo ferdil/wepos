@@ -1,25 +1,25 @@
-# Copyright (C) 2019 weDevs
+# Copyright (C) 2020 weDevs
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
 "Project-Id-Version: wePOS - Point Of Sale (POS) for WooCommerce 1.0.9\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wepos\n"
-"POT-Creation-Date: 2019-12-10 11:14:40+00:00\n"
+"POT-Creation-Date: 2020-02-24 12:28:16+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2019-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2020-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "X-Generator: wp-vue-i18n 1.1.3\n"
 
 #: assets/js/admin.js:122 assets/js/admin.js:369 assets/js/admin.js:461
 #: assets/js/admin.js:1443 assets/js/bootstrap.js:949
-#: assets/js/frontend.js:3328 assets/js/frontend.js:3510
-#: assets/js/frontend.js:3594 assets/js/frontend.js:4121
-#: assets/js/frontend.js:5182 assets/js/frontend.js:5349
-#: assets/js/frontend.js:5454 assets/js/frontend.js:5830
-#: assets/js/frontend.js:5941 assets/js/vendor.js:26483
+#: assets/js/frontend.js:3332 assets/js/frontend.js:3514
+#: assets/js/frontend.js:3598 assets/js/frontend.js:4125
+#: assets/js/frontend.js:5186 assets/js/frontend.js:5353
+#: assets/js/frontend.js:5458 assets/js/frontend.js:5834
+#: assets/js/frontend.js:5945 assets/js/vendor.js:26483
 #: assets/js/vendor.js:26722 assets/js/vendor.js:26832
 #: assets/js/vendor.js:26952 assets/js/vendor.js:26974
 #: assets/js/vendor.js:27031 assets/js/vendor.js:30386
@@ -87,63 +87,62 @@ msgstr ""
 msgid "label"
 msgstr ""
 
-#: assets/js/frontend.js:1268 assets/js/frontend.js:1721
-#: assets/js/frontend.js:1749 assets/js/frontend.min.js:1
+#: assets/js/frontend.js:1268 assets/js/frontend.js:1723
+#: assets/js/frontend.js:1751 assets/js/frontend.min.js:1
 #: assets/src/frontend/components/Home.vue:725
-#: assets/src/frontend/components/Home.vue:1193
-#: assets/src/frontend/components/Home.vue:1221
+#: assets/src/frontend/components/Home.vue:1198
+#: assets/src/frontend/components/Home.vue:1226
 msgid "All categories"
 msgstr ""
 
-#: assets/js/frontend.js:1376 assets/js/frontend.js:1384
-#: assets/js/frontend.min.js:1 assets/src/frontend/components/Home.vue:836
-#: assets/src/frontend/components/Home.vue:844
-msgid "Shoplit Interface not available"
-msgstr ""
-
-#: assets/js/frontend.js:1573 assets/js/frontend.min.js:1
+#: assets/js/frontend.js:1575 assets/js/frontend.min.js:1
 #: assets/src/frontend/components/Home.vue:260
 #: assets/src/frontend/components/Home.vue:455
-#: assets/src/frontend/components/Home.vue:1039
+#: assets/src/frontend/components/Home.vue:1044
 #: assets/src/frontend/components/PrintReceiptHtml.vue:21
 msgid "Discount"
 msgstr ""
 
-#: assets/js/frontend.js:1591 assets/js/frontend.min.js:1
+#: assets/js/frontend.js:1593 assets/js/frontend.min.js:1
 #: assets/src/frontend/components/Home.vue:281
 #: assets/src/frontend/components/Home.vue:459
-#: assets/src/frontend/components/Home.vue:1057
+#: assets/src/frontend/components/Home.vue:1062
 #: assets/src/frontend/components/PrintReceiptHtml.vue:22
 msgid "Fee"
 msgstr ""
 
-#: assets/js/frontend.js:1657 assets/js/frontend.js:2116
-#: assets/js/frontend.min.js:1 assets/src/frontend/components/Home.vue:1126
+#: assets/js/frontend.js:1659 assets/js/frontend.js:2118
+#: assets/js/frontend.min.js:1 assets/src/frontend/components/Home.vue:1131
 #: assets/src/frontend/components/ProductSearch.vue:275
 msgid "Variation is not available"
 msgstr ""
 
-#: assets/js/frontend.js:1962 assets/js/frontend.min.js:1
+#: assets/js/frontend.js:1964 assets/js/frontend.min.js:1
 #: assets/src/frontend/components/ProductSearch.vue:121
 msgid "Scan your product"
 msgstr ""
 
-#: assets/js/frontend.js:1962 assets/js/frontend.min.js:1
+#: assets/js/frontend.js:1964 assets/js/frontend.min.js:1
 #: assets/src/frontend/components/ProductSearch.vue:121
 msgid "Search product by typing"
 msgstr ""
 
-#: assets/js/frontend.js:2603 assets/js/frontend.min.js:1
+#: assets/js/frontend.js:2605 assets/js/frontend.min.js:1
 #: assets/src/frontend/components/CustomerSearch.vue:334
 msgid "Please enter an email address for customer"
 msgstr ""
 
-#: assets/js/frontend.js:5114
+#: assets/js/frontend.js:5118
 msgid "aside"
 msgstr ""
 
-#: assets/js/frontend.js:8690
+#: assets/js/frontend.js:8694
 msgid "td"
+msgstr ""
+
+#: assets/js/frontend.min.js:1 assets/src/frontend/components/Home.vue:836
+#: assets/src/frontend/components/Home.vue:844
+msgid "Shoplit Interface not available"
 msgstr ""
 
 #: assets/js/frontend.min.js:1 assets/src/frontend/components/Home.vue:184
@@ -716,23 +715,23 @@ msgstr ""
 
 #: includes/gateways/class-shoplit-gateway.php:41
 #: includes/gateways/class-shoplit-gateway.php:64
-msgid "Shoplit"
+msgid "SellinPoint"
 msgstr ""
 
 #: includes/gateways/class-shoplit-gateway.php:42
-msgid "Use the Shoplit PED to take online card payments"
+msgid "Use the SellinPoint PED to take online card payments"
 msgstr ""
 
 #: includes/gateways/class-shoplit-gateway.php:55
-msgid "Enable Shoplit gateway"
+msgid "Enable SellinPoint gateway"
 msgstr ""
 
 #: includes/gateways/class-shoplit-gateway.php:71
-msgid "Pay with Shoplit PED"
+msgid "Pay with SellinPoint PED"
 msgstr ""
 
 #: includes/gateways/class-shoplit-gateway.php:112
-msgid "Payment made using Shoplit PED"
+msgid "Payment made using SellinPoint PED"
 msgstr ""
 
 #: lib/appsero/src/Insights.php:367

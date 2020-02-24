@@ -38,8 +38,8 @@ class Shoplit extends \WC_Payment_Gateway
     {
         $this->id = 'wepos_shoplit';
         $this->icon = apply_filters('wepos_shoplit_icon', '');
-        $this->method_title = __('Shoplit', 'wepos');
-        $this->method_description = __('Use the Shoplit PED to take online card payments', 'wepos');
+        $this->method_title = __('SellinPoint', 'wepos');
+        $this->method_description = __('Use the SellinPoint PED to take online card payments', 'wepos');
         $this->has_fields = true;
     }
 
@@ -52,7 +52,7 @@ class Shoplit extends \WC_Payment_Gateway
         $this->form_fields = array(
             'enabled' => array(
                 'title' => __('Enable/Disable', 'wepos'),
-                'label' => __('Enable Shoplit gateway', 'wepos'),
+                'label' => __('Enable SellinPoint gateway', 'wepos'),
                 'type' => 'checkbox',
                 'description' => '',
                 'default' => 'yes',
@@ -61,14 +61,14 @@ class Shoplit extends \WC_Payment_Gateway
                 'title' => __('Title', 'wepos'),
                 'type' => 'text',
                 'description' => __('Payment method description that the marchent see in pos checkout', 'wepos'),
-                'default' => __('Shoplit', 'wepos'),
+                'default' => __('SellinPoint', 'wepos'),
                 'desc_tip' => true,
             ),
             'description' => array(
                 'title' => __('Description', 'wepos'),
                 'type' => 'textarea',
                 'description' => __('Payment method description that marchent see in pos checkout page', 'wepos'),
-                'default' => __('Pay with Shoplit PED', 'wepos'),
+                'default' => __('Pay with SellinPoint PED', 'wepos'),
                 'desc_tip' => true,
             ),
         );
@@ -109,7 +109,7 @@ class Shoplit extends \WC_Payment_Gateway
         // Mark as completed
         $order->payment_complete();
 
-        $order->update_status('completed', __('Payment made using Shoplit PED', 'wepos'));
+        $order->update_status('completed', __('Payment made using SellinPoint PED', 'wepos'));
         $order->set_created_via('wepos');
         $order->save();
 
