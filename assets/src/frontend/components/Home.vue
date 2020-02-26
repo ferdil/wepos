@@ -171,6 +171,19 @@
                     </div>
                 </div>
             </div>
+            <div class="pay-panel">
+                <div class="pay-line">
+                    <table class="pay-table">
+                        <tbody>
+                            <tr class="pay-now" @click="initPayment()">
+                                <td>{{ __( 'Pay Now', 'wepos' ) }}</td>
+                                <td class="amount">{{ formatPrice( $store.getters['Cart/getTotal'] ) }}</td>
+                                <td class="icon"><span class="flaticon-right-arrow"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <component
                 v-for="(beforCartPanel, key ) in beforCartPanels"
                 :key="key"
@@ -219,11 +232,10 @@
                                     </tr>
                                     <tr v-if="item.editQuantity" class="update-quantity-wrap" v-bind:key="item.id">
                                         <td colspan="5">
-                                            <span class="qty">{{ __( 'Quantity', 'wepos' ) }}</span>
-                                            <span class="qty-number"><input type="number" min="1" step="1" v-model="item.quantity"></span>
                                             <span class="qty-action">
-                                                <a href="#" class="add" @click.prevent="addQuantity( item, key )">&#43;</a>
                                                 <a href="#" class="minus" @click.prevent="removeQuantity( item, key )">&#45;</a>
+                                                <a href="#" class="qty-number"><qty-keypad @setQuantity="setQuantity" :name="item.quantity.toString()" :itemIndex=key short-key="qty"></qty-keypad></a>
+                                                <a href="#" class="add" @click.prevent="addQuantity( item, key )">&#43;</a>
                                             </span>
                                         </td>
                                     </tr>
@@ -302,11 +314,6 @@
                                         {{ orderdata.customer_note }}
                                     </td>
                                     <td class="action"><span class="flaticon-cancel-music" @click.prevent="removeCustomerNote"></span></td>
-                                </tr>
-                                <tr class="pay-now" @click="initPayment()">
-                                    <td>{{ __( 'Pay Now', 'wepos' ) }}</td>
-                                    <td class="amount">{{ formatPrice( $store.getters['Cart/getTotal'] ) }}</td>
-                                    <td class="icon"><span class="flaticon-right-arrow"></span></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -477,9 +484,10 @@
                         </div>
                     </div>
                     <div class="right-content">
-                        <div class="header wepos-clearfix">
-                            <h2 class="wepos-left">{{ __( 'Pay', 'wepos' ) }}</h2>
-                            <span class="pay-amount wepos-right">{{ formatPrice( $store.getters['Cart/getTotal'] ) }}</span>
+                        <div class="header">
+                            <div class="h2 wepos-left">{{ __( 'Pay', 'wepos' ) }}</div>
+                            <div class="pay-amount">{{ formatPrice( $store.getters['Cart/getTotal'] ) }}</div>
+                            <div class="button process-checkout-btn wepos-right" @click.prevent="processPayment" :disabled="!ableToProcess()">{{ __( 'Process Payment', 'wepos' ) }}</div>
                         </div>
 
                         <div class="content">
@@ -500,9 +508,9 @@
                                 <template v-else>
                                     <p>{{ __( 'No payment gateway found', 'wepos' ) }}</p>
                                 </template>
-                            </div>
-                            <div class="mpress_result">
-                                <input style="display:none;" id="mpress_result" v-model="mpressResult" @input="completePayment()">
+                                <div class="mpress_result">
+                                    <input style="display:none;" id="mpress_result" v-model="mpressResult" @input="completePayment()">
+                                </div>
                             </div>
                             <template v-if="orderdata.payment_method=='wepos_cash'">
                                 <div class="payment-option">
@@ -547,7 +555,6 @@
 
                         <div class="footer wepos-clearfix">
                             <a href="#" class="back-btn wepos-left" @click.prevent="backToSale()">{{ __( 'Back to Sale', 'wepos' ) }}</a>
-                            <button class="process-checkout-btn wepos-right" @click.prevent="processPayment" :disabled="!ableToProcess()">{{ __( 'Process Payment', 'wepos' ) }}</button>
                         </div>
                     </div>
                 </div>
@@ -574,6 +581,7 @@ import Overlay from './Overlay.vue';
 import ProductSearch from './ProductSearch.vue';
 import CustomerSearch from './CustomerSearch.vue';
 import FeeKeypad from './FeeKeypad.vue';
+import QtyKeypad from './QtyKeypad.vue';
 import MugenScroll from 'vue-mugen-scroll';
 import PrintReceipt from './PrintReceipt.vue';
 import PrintReceiptHtml from './PrintReceiptHtml.vue';
@@ -592,6 +600,7 @@ export default {
         Modal,
         MugenScroll,
         FeeKeypad,
+        QtyKeypad,
         PrintReceipt,
         PrintReceiptHtml,
         CustomerNote
@@ -895,7 +904,7 @@ export default {
                     // And process the payment immediatly
                     wepos.api.post(wepos.rest.root + wepos.rest.posversion + '/payment/process', response).done(data => {
                         if (data.result == 'success') {
-                            mpress.CashDrawer();
+                            mpress.openCashDrawer();
                             this.$router.push({
                                 name: 'Home',
                                 query: {
@@ -1151,6 +1160,9 @@ export default {
         },
         removeQuantity( item, key ) {
             this.$store.dispatch( 'Cart/removeItemQuantityAction', key );
+        },
+        setQuantity( value, key ) {
+            this.$store.dispatch( 'Cart/setItemQuantityAction', { key: key, value: value } );
         },
         fetchGateway() {
             wepos.api.get( wepos.rest.root + wepos.rest.posversion + '/payment/gateways' )
@@ -1778,7 +1790,7 @@ export default {
 
     .content-cart {
         flex: 1.3;
-        height: 94.5vh;
+        height: 90vh;
 
         .top-panel {
             display: flex;
@@ -1966,9 +1978,112 @@ export default {
             }
         }
 
+        .pay-panel {
+            background: #1ABC9C;
+            box-shadow: 0 3px 15px 0 rgba(0,0,0,.02);
+            position: relative;
+            border-radius: 3px;
+            display: flex;
+            flex-flow: column wrap;
+            
+            .pay-line {
+                flex:auto;
+                width: 100%;
+                flex-grow:0;
+
+                table.pay-table {
+                    display: table;
+                    width: 100%;
+                    border-collapse: collapse;
+                    border-spacing: 2px;
+                    border-color: grey;
+
+                    tbody {
+                        tr {
+                            border-bottom: 1px solid #ECEEF0;
+                            height: 35px;
+                            display: table-row;
+                            line-height: 20px;
+
+                            &:first-child {
+                                border-top: 1px solid #ECEEF0;
+                            }
+
+                            &:last-child {
+                                border-bottom: none;
+                            }
+
+                            td {
+                                padding: 9px 12px;
+                                font-weight: bold;
+                                line-height: 20px;
+
+                                &:last-child {
+                                    text-align: right;
+                                }
+
+                                &.label {
+                                    width: 45%;
+                                }
+                                &.price {
+                                    width: 45%;
+                                    text-align: right;
+                                }
+                                &.action {
+                                    width: 6%;
+                                    text-align: right;
+
+                                    span {
+                                        &:before {
+                                            font-size: 7px;
+                                            padding: 5px;
+                                            border-radius: 50px;
+                                            cursor: pointer;
+                                            background: #BDC0C9;
+                                            color: #FFFFFF;
+                                            border: none;
+                                        }
+
+                                        &:hover {
+                                            &:before {
+                                                background: #E9485E;
+                                                color: #FFFFFF;
+                                                border: none;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            &.pay-now {
+                                background: #1ABC9C;
+                                color: #fff;
+                                cursor: pointer;
+                                font-size: 16px;
+
+                                td {
+                                    padding: 18px 10px 18px 12px;
+                                    &.amount {
+                                        text-align: right;
+                                    }
+                                    &.icon {
+                                        padding: 0px 5px;
+                                        text-align: left;
+                                        line-height: 25px;
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+
+        }
+
         .cart-panel {
             background: #fff;
-            height: 90%;
+            height: 80vh;
             box-shadow: 0 3px 15px 0 rgba(0,0,0,.02);
             position: relative;
             display: flex;
@@ -2146,25 +2261,6 @@ export default {
                             &.note {
                                 .note-text {
                                     font-weight: normal;
-                                }
-                            }
-
-                            &.pay-now {
-                                background: #1ABC9C;
-                                color: #fff;
-                                cursor: pointer;
-                                font-size: 16px;
-
-                                td {
-                                    padding: 18px 10px 18px 12px;
-                                    &.amount {
-                                        text-align: right;
-                                    }
-                                    &.icon {
-                                        padding: 0px 5px;
-                                        text-align: left;
-                                        line-height: 25px;
-                                    }
                                 }
                             }
 

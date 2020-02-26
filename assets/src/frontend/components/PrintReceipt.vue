@@ -18,8 +18,8 @@ export default {
             var html = window.document.getElementsByClassName('wepos-checkout-print-wrapper')[0].innerHTML;
             var txt = htmlToText(html);
             
-            if (orderdata.payment_method == "wepos_shoplit" && typeof window.Shoplit != 'undefined') {
-                // This takes the receipt DV and sends it to Shoplit
+            if (typeof window.Shoplit != 'undefined') {
+                // This takes the receipt and sends it to Shoplit
                 var html = window.document.getElementsByClassName('wepos-checkout-print-wrapper')[0].innerHTML;
                 
                 window.Shoplit.printReceipt(htmlToText(html));

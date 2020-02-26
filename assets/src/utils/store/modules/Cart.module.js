@@ -156,6 +156,14 @@ export default {
             }
         },
 
+        setCartItemQuantity( state, param ) {
+
+            var item = state.cartdata.line_items[param.key];
+            if ( Helper.hasStock( item, item.value ) ) {
+                state.cartdata.line_items[param.key].quantity = param.value;
+            }
+        },
+
         toggleEditQuantity( state, itemKey ) {
             state.cartdata.line_items[itemKey].editQuantity = !  state.cartdata.line_items[itemKey].editQuantity;
         },
@@ -268,7 +276,9 @@ export default {
             context.commit( 'calculateDiscount', context.getters );
             context.commit( 'calculateFee', context.getters );
         },
-
+        setItemQuantityAction( context, item) {
+            context.commit( 'setCartItemQuantity', item );
+        },
         removeItemQuantityAction( context, itemKey ) {
             context.commit( 'removeCartItemQuantity', itemKey );
             context.commit( 'calculateDiscount', context.getters );

@@ -1,17 +1,17 @@
 ///
-///	@file app.js
+///	@file mpresspay.js
 ///
 ///	@author Ferdi Ladeira
 ///
-///	@brief Application Constructor
+///	@brief mPress Handler
 ///
 /// @description
 ///
-///	Main application variable with event handlers and calls to plugins
+///	The mpress methods talk to mPress via the Shoplit plugin
 ///
 
 /*
- * This is loaded on the Magento Server in the JavaScripts folder
+ * This is loaded on by the Wordpress code in the wepos plugin
  * and contains the payment call to the mPress plugin running
  * in the Cordova WebView
  * This will fail if run on a non-cordova webview
@@ -26,6 +26,8 @@ var mpress;
         },
         startPEDPayment: function(data) {
             console.log('Incoming mPress Payment Request :' + JSON.stringify(data));
+            if (window.Shoplit == undefined)
+                return;
             return window.Shoplit.startPEDPayment(JSON.stringify(data));
         },
         donePEDPayment: function(data) {
@@ -40,6 +42,8 @@ var mpress;
         },
         openCashDrawer: function() {
             console.log('Open Cash Drawer Request :');
+            if (window.Shoplit == undefined)
+                return;
             return window.Shoplit.openCashDrawer();
 
         },

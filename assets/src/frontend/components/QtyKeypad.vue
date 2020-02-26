@@ -1,12 +1,12 @@
 <template>
-    <div class="wepos-fee-keypad-wrap" :class="className" v-hotkey="hotkeys">
-        <v-popover offset="5" popover-base-class="fee-keypad tooltip popover" placement="top" :open="viewFeeKeypad">
-            <a href="#" @click="showFeeKeypad">{{ __( 'Add', 'wepos' ) }} {{ name }}</a>
+    <div class="wepos-qty-keypad-wrap" :class="className" v-hotkey="hotkeys">
+        <v-popover offset="5" popover-base-class="qty-keypad tooltip popover" placement="top" :open="viewQtyKeypad">
+            <a href="#" @click="showQtyKeypad">&nbsp;{{ name }}&nbsp;</a>
             <template slot="popover">
                 <form>
-                    <input type="text" v-model="displayValue" ref="feeinput" @keyup="inputChange">
+                    <input type="text" v-model="displayValue" ref="qtyinput" @keyup="inputChange">
                 </form>
-                <keyboard v-model="input" :layouts="layout()" @percent="percentFee" @flat="flatFee" @input="change"/>
+                <keyboard v-model="input" :layouts="layout()" @resetqty="resetQty" @qty="qty" @input="change"/>
             </template>
         </v-popover>
     </div>
@@ -17,7 +17,7 @@ import keyboard from './Keyboard.vue';
 
 export default {
 
-    name: 'FeeKeypad',
+    name: 'QtyKeypad',
 
     components : {
         keyboard
@@ -25,14 +25,9 @@ export default {
     computed: {
         hotkeys() {
             var keymap = {
-                discount : {
-                    'f4' : this.showFeeKeypad,
-                    'esc': this.hideFeeKepad
-                },
-                fee : {
-                    'f5' : this.showFeeKeypad,
-                    'esc': this.hideFeeKepad
-                },
+				qty : {
+                    'esc': this.hideQtyKeypad
+				}
             }
             return keymap[this.shortKey];
         }
@@ -40,7 +35,7 @@ export default {
     props: {
         name: {
             type: String,
-            default: 'Fee'
+            default: '1'
         },
         className: {
             type: String,
@@ -48,32 +43,34 @@ export default {
         },
         shortKey: {
             type: String,
-            default: ''
-        },
+            default: 'qty'
+		},
+		itemIndex: {
+			type: Number,
+			default: 0
+		}
     },
     data () {
         return {
             input: '',
             displayValue: '',
-            viewFeeKeypad: false
+			viewQtyKeypad: false,
         };
     },
     methods: {
-        hideFeeKepad(e) {
-            this.viewFeeKeypad = false;
+        hideQtyKeypad(e) {
+            this.viewQtyKeypad = false;
         },
         layout() {
-            return '123|456|789|{<span class="keyboard-icon flaticon-backspace"></span>:backspace}0'+wepos.currency_format_decimal_sep+'|{% '+this.name+':percent}{'+ wepos.currency_format_symbol + ' '+ this.name+':flat}';
-        },
-        percentFee( keyboard ) {
-            this.$emit( 'inputfee', keyboard.value.toString(), 'percent' );
-            this.viewFeeKeypad = false;
-            this.input='';
-            this.displayValue='';
-        },
-        flatFee( keyboard ) {
-            this.$emit( 'inputfee', keyboard.value.toString(), 'flat' );
-            this.viewFeeKeypad = false;
+            return '123|456|789|{<span class="keyboard-icon flaticon-backspace"></span>:backspace}0'+wepos.currency_format_decimal_sep+'|{ C :resetqty }{ Ok :qty}';
+		},
+		resetQty( keyboard) {
+			this.displayValue = '1';
+			this.input = this.displayValue;
+		},
+        qty( keyboard ) {
+            this.$emit( 'setQuantity', keyboard.value.toString(), this.itemIndex);
+            this.viewQtyKeypad = false;
             this.input='';
             this.displayValue='';
         },
@@ -88,10 +85,10 @@ export default {
                 }
             }
 
-            jQuery( this.$refs.feeinput ).focus();
+            jQuery( this.$refs.qtyinput ).focus();
 
             if ( this.input == '' ) {
-                jQuery( this.$refs.feeinput ).focus();
+                jQuery( this.$refs.qtyinput ).focus();
             }
         },
         inputChange() {
@@ -102,14 +99,16 @@ export default {
             }
 
             if ( this.input == '' ) {
-                jQuery( this.$refs.feeinput ).focus();
+                jQuery( this.$refs.qtyinput ).focus();
             }
         },
-        showFeeKeypad(e) {
+        showQtyKeypad(e) {
             e.preventDefault();
-            this.viewFeeKeypad = true;
+			this.viewQtyKeypad = true;
+			this.displayValue = '';
+			this.input = '';
             setTimeout( () => {
-                jQuery( this.$refs.feeinput ).focus();
+                jQuery( this.$refs.qtyinput ).focus();
             }, 500 );
         }
     }
@@ -117,12 +116,11 @@ export default {
 </script>
 
 <style lang="less">
-.wepos-fee-keypad-wrap {
+.wepos-qty-keypad-wrap {
     display: inline-block;
-    float: left;
 }
 
-.fee-keypad {
+.qty-keypad {
     .tooltip-inner {
         input {
             width: 87%;

@@ -229,7 +229,7 @@
                     border-right:none;
                 }
 
-                span.keypord-icon {
+                span.keyboard-icon {
                 	&:before {
                 		font-weight: bold;
                 	}
@@ -253,7 +253,7 @@
                 &:last-child {
                     border-right: none;
                 }
-                span.keypord-icon {
+                span.keyboard-icon {
                 	&:before {
                 		font-weight: bold;
                 	}
