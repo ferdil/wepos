@@ -145,8 +145,7 @@
                         </button>
                         <template slot="popover">
                             <ul>
-                                <component v-for="(quickLinkListStartComponent,
-                    key) in quickLinkListStart" :key="key - `1`" :is="quickLinkListStartComponent" />
+                                <component v-for="(quickLinkListStartComponent,key) in quickLinkListStart" :key="key - `1`" :is="quickLinkListStartComponent" />
                                 <li>
                                     <a href="#" @click.prevent="emptyCart">
                                         <span class="flaticon-empty-cart quick-menu-icon"></span>
@@ -210,17 +209,11 @@
                                 <tr v-bind:key="item.id" :class="setID(key)">
                                     <td class="name" @click="toggleEditQuantity(item, key)">
                                         {{ item.name }}
-                                        <div class="attribute" v-if="
-                          item.attribute.length > 0 && item.type === 'variable'
-                        ">
+                                        <div class="attribute" v-if="item.attribute.length > 0 && item.type === 'variable'">
                                             <ul>
                                                 <li v-for="attribute_item in item.attribute" v-bind:key="attribute_item.id">
-                                                    <span class="attr_name">{{
-                              attribute_item.name
-                            }}</span>:
-                                                    <span class="attr_value">{{
-                              attribute_item.option
-                            }}</span>
+                                                    <span class="attr_name">{{attribute_item.name}}</span>:
+                                                    <span class="attr_value">{{attribute_item.option}}</span>
                                                 </li>
                                             </ul>
                                         </div>
@@ -230,17 +223,11 @@
                                     </td>
                                     <td class="price" @click="toggleEditQuantity(item, key)">
                                         <template v-if="item.on_sale">
-                                            <span class="sale-price">{{
-                          formatPrice(item.quantity * item.sale_price)
-                        }}</span>
-                                            <span class="regular-price">{{
-                          formatPrice(item.quantity * item.regular_price)
-                        }}</span>
+                                            <span class="sale-price">{{formatPrice(item.quantity * item.sale_price)}}</span>
+                                            <span class="regular-price">{{formatPrice(item.quantity * item.regular_price)}}</span>
                                         </template>
                                         <template v-else>
-                                            <span class="sale-price">{{
-                          formatPrice(item.quantity * item.regular_price)
-                        }}</span>
+                                            <span class="sale-price">{{formatPrice(item.quantity * item.regular_price)}}</span>
                                         </template>
                                     </td>
                                     <td class="remove">
@@ -251,9 +238,7 @@
                                     <td colspan="5">
                                         <span class="qty-action">
                                             <a href="#" class="minus" @click.prevent="removeQuantity(item, key)">&#45;</a>
-                                            <a href="#" class="qty-number">
-                                                <qty-keypad @setQuantity="setQuantity" :name="item.quantity.toString()" :itemIndex="key" short-key="qty"></qty-keypad>
-                                            </a>
+                                            <qty-keypad @setQuantity="setQuantity" :name="item.quantity.toString()" :itemIndex="key" short-key="qty"></qty-keypad>
                                             <a href="#" class="add" @click.prevent="addQuantity(item, key)">&#43;</a>
                                         </span>
                                     </td>
@@ -278,10 +263,7 @@
                             <tr class="cart-meta-data">
                                 <td class="label">
                                     {{ __("Subtotal", "wepos") }}
-                                    <span class="name" v-if="
-                        settings.woo_tax.wc_tax_display_cart == 'incl' &&
-                          $store.getters['Cart/getTotalLineTax'] > 0
-                      ">
+                                    <span class="name" v-if="settings.woo_tax.wc_tax_display_cart == 'incl' && $store.getters['Cart/getTotalLineTax'] > 0">
                                         {{ __("Includes Tax", "wepos") }}
                                         {{ formatPrice($store.getters["Cart/getTotalLineTax"]) }}
                                     </span>
@@ -296,12 +278,7 @@
                                     <template v-if="fee.type == 'discount'">
                                         <td class="label">
                                             {{ __("Discount", "wepos") }}
-                                            <span class="name">
-                                                {{
-                            fee.discount_type == "percent"
-                              ? fee.value + "%"
-                              : formatPrice(fee.value)
-                          }}
+                                            <span class="name">{{fee.discount_type == "percent"? fee.value + "%": formatPrice(fee.value)}}
                                             </span>
                                         </td>
                                         <td class="price">
@@ -316,17 +293,13 @@
                                             <td class="label" colspan="2">
                                                 <input type="text" class="fee-name" v-model="feeData.name" :placeholder="__('Fee Name', 'wepos')" ref="fee_name" />
                                                 <input type="number" class="fee-amount" min="0" step="any" v-model="feeData.value" :placeholder="__('Total', 'wepos')" ref="fee_total" />
-                                                <template v-if="
-                              settings.wepos_general.enable_fee_tax == 'yes'
-                            ">
+                                                <template v-if="settings.wepos_general.enable_fee_tax == 'yes'">
                                                     <label for="fee-tax-status">
                                                         <input type="checkbox" id="fee-tax-status" class="fee-tax-status" v-model="feeData.tax_status" :true-value="'taxable'" :false-value="'none'" />
                                                         {{ __("Taxable", "wepos") }}
                                                     </label>
                                                     <select class="fee-tax-class" v-model="feeData.tax_class" v-if="feeData.tax_status == 'taxable'">
-                                                        <option v-for="feeTax in availableTax" v-bind:key="feeTax.class" :value="
-                                  feeTax.class == 'standard' ? '' : feeTax.class
-                                ">
+                                                        <option v-for="feeTax in availableTax" v-bind:key="feeTax.class" :value="feeTax.class == 'standard' ? '' : feeTax.class">
                                                             {{ unSanitizeString(feeTax.class) }} -
                                                             {{ feeTax.percentage_rate }}
                                                         </option>
@@ -346,14 +319,7 @@
                                         <template v-else>
                                             <td class="label" @dblclick.prevent="editFeeData(key)">
                                                 {{ __("Fee", "wepos") }}
-                                                <span class="name">
-                                                    {{ fee.name }}
-                                                    {{
-                              fee.fee_type == "percent"
-                                ? fee.value + "%"
-                                : formatPrice(fee.value)
-                            }}
-                                                </span>
+                                                <span class="name">{{ fee.name }}{{fee.fee_type == "percent"? fee.value + "%": formatPrice(fee.value)}}</span>
                                             </td>
                                             <td class="price">
                                                 {{ formatPrice(Math.abs(fee.total)) }}
@@ -412,7 +378,6 @@
             </div>
         </template>
     </modal>
-
     <modal v-if="showHelp" @close="closeHelp()" width="700px" height="500px">
         <template slot="body">
             <div class="wepos-help-wrapper">
@@ -434,9 +399,7 @@
                         <span class="code">
                             <code>f3</code>
                         </span>
-                        <span class="title">{{
-                __("Toggle Product View", "wepos")
-              }}</span>
+                        <span class="title">{{__("Toggle Product View", "wepos")}}</span>
                     </li>
                     <li>
                         <span class="code">
@@ -448,9 +411,7 @@
                         <span class="code">
                             <code>f5</code>
                         </span>
-                        <span class="title">{{
-                __("Add Discount in cart", "wepos")
-              }}</span>
+                        <span class="title">{{__("Add Discount in cart", "wepos")}}</span>
                     </li>
                     <li>
                         <span class="code">
@@ -486,9 +447,7 @@
                         <span class="code">
                             <code>f9</code>
                         </span>
-                        <span class="title">{{
-                __("Go to payment receipt", "wepos")
-              }}</span>
+                        <span class="title">{{__("Go to payment receipt", "wepos")}}</span>
                     </li>
                     <li>
                         <span class="code">
@@ -506,9 +465,7 @@
                         <span class="code">
                             <code>ctrl/cmd+?</code>
                         </span>
-                        <span class="title">{{
-                __("Show/Close(Toggle) Help", "wepos")
-              }}</span>
+                        <span class="title">{{__("Show/Close(Toggle) Help", "wepos")}}</span>
                     </li>
                     <li>
                         <span class="code">
@@ -532,17 +489,11 @@
                                 <tr v-for="item in cartdata.line_items" v-bind:key="item.id">
                                     <td class="name">
                                         {{ item.name }}
-                                        <div class="attribute" v-if="
-                          item.attribute.length > 0 && item.type === 'variable'
-                        ">
+                                        <div class="attribute" v-if="item.attribute.length > 0 && item.type === 'variable'">
                                             <ul>
                                                 <li v-for="attribute_item in item.attribute" v-bind:key="attribute_item.id">
-                                                    <span class="attr_name">{{
-                              attribute_item.name
-                            }}</span>:
-                                                    <span class="attr_value">{{
-                              attribute_item.option
-                            }}</span>
+                                                    <span class="attr_name">{{attribute_item.name}}</span>:
+                                                    <span class="attr_value">{{attribute_item.option}}</span>
                                                 </li>
                                             </ul>
                                         </div>
@@ -550,17 +501,11 @@
                                     <td class="quantity">{{ item.quantity }}</td>
                                     <td class="price">
                                         <template v-if="item.on_sale">
-                                            <span class="sale-price">{{
-                          formatPrice(item.quantity * item.sale_price)
-                        }}</span>
-                                            <span class="regular-price">{{
-                          formatPrice(item.quantity * item.regular_price)
-                        }}</span>
+                                            <span class="sale-price">{{formatPrice(item.quantity * item.sale_price)}}</span>
+                                            <span class="regular-price">{{formatPrice(item.quantity * item.regular_price)}}</span>
                                         </template>
                                         <template v-else>
-                                            <span class="sale-price">{{
-                          formatPrice(item.quantity * item.regular_price)
-                        }}</span>
+                                            <span class="sale-price">{{formatPrice(item.quantity * item.regular_price)}}</span>
                                         </template>
                                     </td>
                                 </tr>
@@ -578,63 +523,33 @@
                                         {{ formatPrice($store.getters["Cart/getTotalLineTax"]) }}
                                     </span>
                                 </span>
-                                <span class="wepos-right">{{
-                    formatPrice($store.getters["Cart/getSubtotal"])
-                  }}</span>
+                                <span class="wepos-right">{{formatPrice($store.getters["Cart/getSubtotal"])}}</span>
                             </li>
                             <template v-if="cartdata.fee_lines.length > 0">
                                 <li class="wepos-clearfix" v-for="fee in cartdata.fee_lines" v-bind:key="fee.id">
                                     <template v-if="fee.type == 'discount'">
-                                        <span class="wepos-left">
-                                            {{ __("Discount", "wepos") }}
-                                            <span class="metadata">
-                                                {{ fee.name }}
-                                                {{
-                            fee.discount_type == "percent"
-                              ? fee.value + "%"
-                              : formatPrice(fee.value)
-                          }}
-                                            </span>
+                                        <span class="wepos-left">{{ __("Discount", "wepos") }}<span class="metadata">{{ fee.name }}{{fee.discount_type == "percent"? fee.value + "%": formatPrice(fee.value)}}</span>
                                         </span>
                                         <span class="wepos-right">-{{ formatPrice(Math.abs(fee.total)) }}</span>
                                     </template>
                                     <template v-else>
-                                        <span class="wepos-left">
-                                            {{ __("Fee", "wepos") }}
-                                            <span class="metadata">
-                                                {{ fee.name }}
-                                                {{
-                            fee.fee_type == "percent"
-                              ? fee.value + "%"
-                              : formatPrice(fee.value)
-                          }}
-                                            </span>
+                                        <span class="wepos-left">{{ __("Fee", "wepos") }}<span class="metadata">{{ fee.name }}{{fee.fee_type == "percent"? fee.value + "%": formatPrice(fee.value)}}</span>
                                         </span>
-                                        <span class="wepos-right">{{
-                        formatPrice(fee.total)
-                      }}</span>
+                                        <span class="wepos-right">{{formatPrice(fee.total)}}</span>
                                     </template>
                                 </li>
                             </template>
                             <li class="wepos-clearfix" v-if="$store.getters['Cart/getTotalTax']">
                                 <span class="wepos-left">{{ __("Tax", "wepos") }}</span>
-                                <span class="wepos-right">{{
-                    formatPrice($store.getters["Cart/getTotalTax"])
-                  }}</span>
+                                <span class="wepos-right">{{formatPrice($store.getters["Cart/getTotalTax"])}}</span>
                             </li>
                             <li class="wepos-clearfix">
-                                <span class="wepos-left">{{
-                    __("Order Total", "wepos")
-                  }}</span>
-                                <span class="wepos-right">{{
-                    formatPrice($store.getters["Cart/getTotal"])
-                  }}</span>
+                                <span class="wepos-left">{{__("Order Total", "wepos")}}</span>
+                                <span class="wepos-right">{{formatPrice($store.getters["Cart/getTotal"])}}</span>
                             </li>
                             <li class="wepos-clearfix">
-                                <span class="wepos-left">{{ __("Due", "wepos") }}</span>
-                                <span class="wepos-right">{{
-                    formatPrice($store.getters["Cart/getTotal"])
-                  }}</span>
+                                <span class="wepos-left">{{ __("Due", "wepos") }}&nbsp;</span>
+                                <span class="wepos-right">{{formatPrice($store.getters["Cart/getTotal"])}}</span>
                             </li>
                         </ul>
                     </div>
@@ -678,16 +593,13 @@
                                 <div class="payment-amount">
                                     <div class="input-part">
                                         <div class="input-wrap">
-                                            <p>{{ __("Cash", "wepos") }}</p>
                                             <div class="input-addon">
-                                                <span class="currency">{{
-                            wepos.currency_format_symbol
-                          }}</span>
-                                                <input type="text" v-model="cashAmount" ref="cashamount" />
+                                                <span class="currency">{{wepos.currency_format_symbol}}</span>
+                                                <cash-keypad @setCashAmount="setCashAmount" :name="cashAmount.toString()" prompt="Enter Cash Tendered" short-key="cash"></cash-keypad>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="change-money">
+                                    <div class="change-amount">
                                         <p>
                                             {{ __("Change Amount", "wepos") }}:
                                             {{ formatPrice(changeAmount) }}
@@ -701,32 +613,16 @@
                                 <div class="payment-amount">
                                     <div class="input-part">
                                         <div class="text">
-                                            <p>
-                                                {{
-                            __(
-                              "Hand Customer the Shoplit P.E.D. and follow the instructions on the Shoplit Device",
-                              "wepos"
-                            )
-                          }}
-                                            </p>
+                                            <p>{{__("Hand Customer the Shoplit P.E.D. and follow the instructions on the Shoplit Device","wepos")}}</p>
                                         </div>
                                     </div>
-                                    <div class="change-money">
-                                        <p>
-                                            {{
-                          __(
-                            "Touch Process Payment to start the payment process",
-                            "wepos"
-                          )
-                        }}
-                                        </p>
+                                    <div class="change-amount">
+                                        <p>{{__("Touch Process Payment to start the payment process","wepos")}}</p>
                                     </div>
                                 </div>
                             </div>
                         </template>
-
-                        <component v-for="(availableGatewayComponent,
-                key) in availableGatewayContent" :key="key" :is="availableGatewayComponent" :availablegateways="availableGateways" />
+                        <component v-for="(availableGatewayComponent, key) in availableGatewayContent" :key="key" :is="availableGatewayComponent" :availablegateways="availableGateways" />
                     </div>
 
                     <div class="footer wepos-clearfix">
@@ -751,6 +647,7 @@ import ProductSearch from "./ProductSearch.vue";
 import CustomerSearch from "./CustomerSearch.vue";
 import FeeKeypad from "./FeeKeypad.vue";
 import QtyKeypad from "./QtyKeypad.vue";
+import CashKeypad from "./CashKeypad.vue";
 import MugenScroll from "vue-mugen-scroll";
 import PrintReceipt from "./PrintReceipt.vue";
 import PrintReceiptHtml from "./PrintReceiptHtml.vue";
@@ -769,6 +666,7 @@ export default {
         MugenScroll,
         FeeKeypad,
         QtyKeypad,
+        CashKeypad,
         PrintReceipt,
         PrintReceiptHtml,
         CustomerNote
@@ -1452,12 +1350,12 @@ export default {
         },
         scrollToItem(product) {
             const productList = this.$store.getters["Cart/getCartLineItems"];
-            const el = this.$el.getElementsByClassName("item-" + productList.findIndex(function(item){
+            const el = this.$el.getElementsByClassName("item-" + productList.findIndex(function (item) {
                 if (product.parent_id == 0)
                     return item.product_id == product.id
                 else
-                    return item.parent_id == product.id;
-                }))[0];
+                    return item.parent_id == product.parent_id;
+            }))[0];
             if (el) {
                 el.scrollIntoView(false);
             }
@@ -1481,13 +1379,21 @@ export default {
                     value: value
                 });
         },
+        setCashAmount(value, key) {
+            if (value.length) {
+                this.cashAmount = value;
+                jQuery('')
+            };
+        },
         fetchGateway() {
             wepos.api
                 .get(wepos.rest.root + wepos.rest.posversion + "/payment/gateways")
                 .done(response => {
                     // Remove Shoplit if we're not running in the App
                     if (navigator.userAgent.indexOf("SHOPLIT") == -1) {
-                        response.splice(response.findIndex(function(g){return g.id === "wepos_shoplit"}),1); // Remove shoplit 
+                        response.splice(response.findIndex(function (g) {
+                            return g.id === "wepos_shoplit"
+                        }), 1); // Remove shoplit 
                     }
                     this.availableGateways = response;
                     this.emptyGatewayDiv = 4 - (this.availableGateways.length % 4);
