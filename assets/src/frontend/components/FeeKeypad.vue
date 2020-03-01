@@ -4,7 +4,7 @@
             <a href="#" @click="showFeeKeypad">{{ __( 'Add', 'wepos' ) }} {{ name }}</a>
             <template slot="popover">
                 <form>
-                    <input type="text" v-model="displayValue" ref="feeinput" @keyup="inputChange">
+                    <input type="text" v-model="displayValue" ref="feeinput" @keyup="inputChange" @focus="disableKeyboard($event)">
                 </form>
                 <keyboard v-model="input" :layouts="layout()" @percent="percentFee" @flat="flatFee" @input="change"/>
             </template>
@@ -104,6 +104,10 @@ export default {
             if ( this.input == '' ) {
                 jQuery( this.$refs.feeinput ).focus();
             }
+        },
+        disableKeyboard(el){
+            el.preventDefault();
+            el.target.blur();
         },
         showFeeKeypad(e) {
             e.preventDefault();

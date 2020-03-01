@@ -4,7 +4,7 @@
             <a href="#" @click="showQtyKeypad">&nbsp;{{ name }}&nbsp;</a>
             <template slot="popover">
                 <form>
-                    <input type="text" v-model="displayValue" ref="qtyinput" @keyup="inputChange">
+                    <input type="text" v-model="displayValue" ref="qtyinput" @keyup="inputChange" @focus="disableKeyboard($event)">
                 </form>
                 <keyboard v-model="input" :layouts="layout()" @resetqty="resetQty" @qty="qty" @input="change"/>
             </template>
@@ -62,11 +62,7 @@ export default {
             this.viewQtyKeypad = false;
         },
         layout() {
-            return '123|456|789|{<span class="keyboard-icon flaticon-backspace"></span>:backspace}0'+wepos.currency_format_decimal_sep+'|{ C :resetqty }{ Ok :qty}';
-		},
-		resetQty( keyboard) {
-			this.displayValue = '1';
-			this.input = this.displayValue;
+            return '123|456|789|{<span class="keyboard-icon flaticon-backspace"></span>:backspace}0'+wepos.currency_format_decimal_sep+'|{C :clear}{ Ok :qty}';
 		},
         qty( keyboard ) {
             this.$emit( 'setQuantity', keyboard.value.toString(), this.itemIndex);
@@ -101,6 +97,10 @@ export default {
             if ( this.input == '' ) {
                 jQuery( this.$refs.qtyinput ).focus();
             }
+        },
+        disableKeyboard(el){
+            el.preventDefault();
+            el.target.blur();
         },
         showQtyKeypad(e) {
             e.preventDefault();

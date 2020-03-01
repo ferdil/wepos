@@ -1085,13 +1085,15 @@ export default {
                 if (rc != 0) {
                     // Payment has failed
                     this.contentWrap.unblock();
-                    window.Shoplit.showToast(
-                        this.mpressResult.StatusDescription +
-                        " (" +
-                        this.mpressResult.ResultCode +
-                        ") " +
-                        this.mpressResult.ResultDescription
-                    );
+                    if (this.mpressResult.ResultCode !== undefined)
+                        window.Shoplit.showToast(
+                            this.mpressResult.StatusDescription +
+                            " (" +
+                            this.mpressResult.ResultCode +
+                            ") " +
+                            this.mpressResult.ResultDescription
+                        );
+
                     return;
                 }
             } catch (ex) {
@@ -1399,6 +1401,12 @@ export default {
                     this.emptyGatewayDiv = 4 - (this.availableGateways.length % 4);
                 });
         },
+        // hideKeyboard() {
+        //     if (typeof mpress != "undefined" && navigator.userAgent.indexOf("SHOPLIT") > 0 ) {
+        //         mpress.hideKeyboard();
+        //     }
+        // },
+
         truncateTitle(text, length) {
             return weLo_.truncate(text, {
                 length: length

@@ -4,7 +4,7 @@
             <input  href="#" v-model="displayValue" @click.prevent="showCashKeypad" :placeholder="prompt">
             <template slot="popover">
                 <form>
-                    <input type="text" v-model="displayValue" ref="cashinput" @keyup="inputChange">
+                    <input type="text" v-model="displayValue" ref="cashinput" @keyup="inputChange" @focus="disableKeyboard($event)">
                 </form>
                 <keyboard v-model="input" :layouts="layout()" @resetcash="resetcash" @cash="cash" @input="change"/>
             </template>
@@ -62,11 +62,7 @@ export default {
             this.viewCashKeypad = false;
         },
         layout() {
-            return '123|456|789|{<span class="keyboard-icon flaticon-backspace"></span>:backspace}0'+wepos.currency_format_decimal_sep+'|{ C :resetcash }{ Ok :cash}';
-		},
-		resetcash( keyboard) {
-			this.displayValue = '1';
-			this.input = this.displayValue;
+            return '123|456|789|{<span class="keyboard-icon flaticon-backspace"></span>:backspace}0'+wepos.currency_format_decimal_sep+'|{ C :clear }{ Ok :cash}';
 		},
         cash( keyboard ) {
             this.$emit( 'setCashAmount', keyboard.value.toString());
@@ -100,6 +96,10 @@ export default {
             if ( this.input == '' ) {
                 jQuery( this.$refs.cashinput ).focus();
             }
+        },
+        disableKeyboard(el){
+            el.preventDefault();
+            el.target.blur();
         },
         showCashKeypad(e) {
             e.preventDefault();

@@ -50,6 +50,12 @@ var mpress;
         pushScannerData: function(scannerData) {
             document.getElementById('product-search').value = scannerData;
             document.getElementById('handlescan').click();
+        },
+        hideKeyboard: function() {
+            window.Shoplit.hideKeyboard();
+        },
+        showKeyboard: function() {
+            window.Shoplit.showKeyboard();
         }
     };
 
