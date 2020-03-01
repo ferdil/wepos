@@ -6,7 +6,7 @@
                 <form>
                     <input type="text" v-model="displayValue" ref="qtyinput" @keyup="inputChange" @focus="disableKeyboard($event)">
                 </form>
-                <keyboard v-model="input" :layouts="layout()" @resetqty="resetQty" @qty="qty" @input="change"/>
+                <keyboard v-model="input" :layouts="layout()" @resetqty="resetqty" @qty="qty" @input="change"/>
             </template>
         </v-popover>
     </div>
@@ -63,7 +63,11 @@ export default {
         },
         layout() {
             return '123|456|789|{<span class="keyboard-icon flaticon-backspace"></span>:backspace}0'+wepos.currency_format_decimal_sep+'|{C :clear}{ Ok :qty}';
-		},
+        },
+        resetqty() {
+            this.input='';
+            this.displayValue='';
+        },
         qty( keyboard ) {
             this.$emit( 'setQuantity', keyboard.value.toString(), this.itemIndex);
             this.viewQtyKeypad = false;

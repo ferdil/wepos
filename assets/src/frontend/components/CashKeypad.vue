@@ -62,8 +62,12 @@ export default {
             this.viewCashKeypad = false;
         },
         layout() {
-            return '123|456|789|{<span class="keyboard-icon flaticon-backspace"></span>:backspace}0'+wepos.currency_format_decimal_sep+'|{ C :clear }{ Ok :cash}';
-		},
+            return '123|456|789|{<span class="keyboard-icon flaticon-backspace"></span>:backspace}0'+wepos.currency_format_decimal_sep+'|{C :clear}{ Ok :cash}';
+        },
+        resetcash() {
+            this.viewCashKeypad = false;
+            this.input='';
+        },
         cash( keyboard ) {
             this.$emit( 'setCashAmount', keyboard.value.toString());
             this.viewCashKeypad = false;
